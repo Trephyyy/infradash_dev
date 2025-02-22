@@ -34,6 +34,6 @@ class CMEAnalysis extends Model
 
     public function cme()
     {
-        return $this->belongsTo(CME::class);
+        return $this->belongsTo(CME::class, 'cme_id'); // Ensure the correct column name is used
     }
 }
