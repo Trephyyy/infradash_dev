@@ -14,50 +14,39 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        $startYear = 2010;
-        $currentYear = date('Y');
+        $startDate = "2024-12-31";
+        $endDate = "2025-02-22";
 
-        for ($year = $startYear; $year <= $currentYear; $year++) {
-            $startDate = "$year-01-01";
-            $endDate = "$year-12-31";
+        $response = Http::withOptions(['verify' => false])->get('https://api.nasa.gov/DONKI/FLR', [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'catalog' => 'ALL',
+            'api_key' => env('NASA_API_KEY'),
+        ]);
 
-            $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/FLARE', [
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'catalog' => 'M2M_CATALOG',
-                'api_key' => env('NASA_API_KEY'),
-            ]);
+        if ($response->successful()) {
+            $data = $response->json();
 
-            if ($response->successful()) {
-                $data = $response->json();
-                Log::info("Fetched " . count($data) . " events for year $year from DONKI API.");
-
-                foreach ($data as $event) {
-                    if (isset($event['flrID'], $event['beginTime'], $event['peakTime'], $event['endTime'], $event['catalog'])) {
-                        Flare::updateOrCreate(
-                            ['flr_id' => $event['flrID']],
-                            [
-                                'catalog' => $event['catalog'],
-                                'instrument' => $event['instruments'][0]['displayName'] ?? null,
-                                'begin_time' => $event['beginTime'],
-                                'peak_time' => $event['peakTime'],
-                                'end_time' => $event['endTime'],
-                                'class_type' => $event['classType'] ?? null,
-                                'source_location' => $event['sourceLocation'] ?? null,
-                                'active_region_num' => $event['activeRegionNum'] ?? null,
-                                'note' => $event['note'] ?? null,
-                                'submission_time' => $event['submissionTime'] ?? null,
-                                'version_id' => $event['versionId'] ?? null,
-                                'link' => $event['link'] ?? null,
-                                'intensity' => $this->convertClassToScale($event['classType'] ?? null),
-                            ]
-                        );
-                    } else {
-                        Log::warning("Missing required fields for event: " . json_encode($event));
-                    }
-                }
-            } else {
-                Log::error("Failed to fetch data for year $year from DONKI API.");
+            foreach ($data as $event) {
+                Log::info("Processing event: " . json_encode($event));
+                Flare::updateOrCreate(
+                    ['flr_id' => $event['flrID']],
+                    [
+                        'catalog' => $event['catalog'] ?? null,
+                        'instrument' => $event['instruments'][0]['displayName'] ?? null,
+                        'begin_time' => $event['beginTime'] ?? null,
+                        'peak_time' => $event['peakTime'] ?? null,
+                        'end_time' => $event['endTime'] ?? null,
+                        'class_type' => $event['classType'] ?? null,
+                        'source_location' => $event['sourceLocation'] ?? null,
+                        'active_region_num' => $event['activeRegionNum'] ?? null,
+                        'note' => substr($event['note'] ?? null, 0, 255),
+                        'submission_time' => $event['submissionTime'] ?? null,
+                        'version_id' => $event['versionId'] ?? null,
+                        'link' => $event['link'] ?? null,
+                        'intensity' => $this->convertClassToScale($event['classType'] ?? null),
+                    ]
+                );
             }
         }
     }

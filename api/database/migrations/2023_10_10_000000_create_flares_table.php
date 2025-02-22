@@ -19,7 +19,7 @@ class CreateFlaresTable extends Migration
             $table->string('class_type')->nullable();
             $table->string('source_location')->nullable();
             $table->integer('active_region_num')->nullable();
-            $table->string('note')->nullable();
+            $table->text('note')->nullable(); // Changed from string to text
             $table->dateTime('submission_time')->nullable();
             $table->integer('version_id')->nullable();
             $table->string('link')->nullable();

@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'https://infradash.space')],
+    'allowed_origins' => ['https://www.infradash.space', 'https://infradash.space'],
 
     'allowed_origins_patterns' => [],
 
