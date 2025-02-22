@@ -13,15 +13,21 @@ class DONKIController extends Controller
             'startDate' => 'required|date',
             'endDate' => 'required|date|after_or_equal:startDate',
             'eventType' => 'required|string|in:ALL,FLARE,CMES', // Assuming eventType can be 'ALL', 'FLARE', 'CMES' or other valid types
+            'mostAccurateOnly' => 'boolean',
+            'speed' => 'integer',
+            'halfAngle' => 'integer',
         ]);
 
         // Fetch data from the external API
         $response = Http::get('https://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
-            'catalog' => 'M2M_CATALOG',
+            'catalog' => 'ALL',
             'api_key' => env('NASA_API_KEY'),
             'eventType' => $validated['eventType'],
+            'mostAccurateOnly' => $request->input('mostAccurateOnly', true),
+            'speed' => $request->input('speed', 500),
+            'halfAngle' => $request->input('halfAngle', 30),
         ]);
 
         // Check for a successful response from the API
