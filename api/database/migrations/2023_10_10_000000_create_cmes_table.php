@@ -11,8 +11,9 @@ class CreateCmesTable extends Migration
         Schema::create('cmes', function (Blueprint $table) {
             $table->id();
             $table->string('event_id')->unique();
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('begin_time');
+            $table->date('peak_time');
+            $table->date('end_time');
             $table->string('catalog');
             $table->string('source_location')->nullable();
             $table->integer('speed')->nullable();
