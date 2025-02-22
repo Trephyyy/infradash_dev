@@ -16,10 +16,11 @@ class DONKIController extends Controller
         ]);
 
         // Fetch data from the external API
-        $response = Http::get('https://kauai.ccmc.gsfc.nasa.gov/DONKI/search/results', [
+        $response = Http::get('https://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
             'catalog' => 'M2M_CATALOG',
+            'api_key' => env('NASA_API_KEY'),
             'eventType' => $validated['eventType'],
         ]);
 
