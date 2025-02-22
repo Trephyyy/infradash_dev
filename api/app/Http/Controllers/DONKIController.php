@@ -24,7 +24,7 @@ class DONKIController extends Controller
         $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
-            'catalog' => 'ALL',
+            'catalog' => 'M2M_CATALOG',
             'api_key' => env('NASA_API_KEY'),
             'eventType' => $validated['eventType'],
             'mostAccurateOnly' => $request->input('mostAccurateOnly', true),
@@ -33,10 +33,7 @@ class DONKIController extends Controller
         ]);
 
         // Log the response for debugging
-        Log::info('DONKI API Response:', [
-            'status' => $response->status(),
-            'response' => $response->body()
-        ]);
+
 
         // Check for a successful response from the API
         if ($response->successful()) {
@@ -44,14 +41,7 @@ class DONKIController extends Controller
             return response()->json($response->json(), 200);
         }
 
-        // Log the error response for debugging
-        Log::error('Failed to fetch data from DONKI API:', [
-            'status' => $response->status(),
-            'response' => $response->body()
-        ]);
 
-        // If the external API fails, return an error
-        Log::info('Using NASA API Key:', ['api_key' => env('NASA_API_KEY')]);
         return response()->json(['error' => 'Failed to fetch data from DONKI API.'], 500);
     }
 }
