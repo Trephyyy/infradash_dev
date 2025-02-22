@@ -34,7 +34,6 @@ class EventSeeder extends Seeder
 
                 foreach ($data as $event) {
                     CME::updateOrCreate(
-                        ['event_id' => $event['eventID']],
                         [
                             'begin_time' => $event['startTime'],
                             'end_time' => $event['endTime'],
