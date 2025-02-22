@@ -14,13 +14,13 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        $startYear = 2010;
+        $startYear = 2024;
         $currentYear = date('Y');
 
         for ($year = $startYear; $year <= $currentYear; $year++) {
             $startDate = "$year-01-01";
             $endDate = "$year-12-31";
-            $response = Http::get('https://api.nasa.gov/DONKI/CME', [
+            $response = Http::get('https://api.nasa.gov/DONKI/FLARE', [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'catalog' => 'M2M_CATALOG',
