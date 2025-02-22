@@ -3,9 +3,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DONKIController extends Controller
 {
+
     public function search(Request $request)
     {
         // Validate incoming request parameters
@@ -13,14 +15,27 @@ class DONKIController extends Controller
             'startDate' => 'required|date',
             'endDate' => 'required|date|after_or_equal:startDate',
             'eventType' => 'required|string|in:ALL,FLARE,CMES', // Assuming eventType can be 'ALL', 'FLARE', 'CMES' or other valid types
+            'mostAccurateOnly' => 'boolean',
+            'speed' => 'integer',
+            'halfAngle' => 'integer',
         ]);
 
         // Fetch data from the external API
-        $response = Http::get('https://kauai.ccmc.gsfc.nasa.gov/DONKI/search/results', [
+        $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
-            'catalog' => 'M2M_CATALOG',
+            'catalog' => 'ALL',
+            'api_key' => env('NASA_API_KEY'),
             'eventType' => $validated['eventType'],
+            'mostAccurateOnly' => $request->input('mostAccurateOnly', true),
+            'speed' => $request->input('speed', 500),
+            'halfAngle' => $request->input('halfAngle', 30),
+        ]);
+
+        // Log the response for debugging
+        Log::info('DONKI API Response:', [
+            'status' => $response->status(),
+            'response' => $response->body()
         ]);
 
         // Check for a successful response from the API
@@ -29,7 +44,14 @@ class DONKIController extends Controller
             return response()->json($response->json(), 200);
         }
 
+        // Log the error response for debugging
+        Log::error('Failed to fetch data from DONKI API:', [
+            'status' => $response->status(),
+            'response' => $response->body()
+        ]);
+
         // If the external API fails, return an error
+        Log::info('Using NASA API Key:', ['api_key' => env('NASA_API_KEY')]);
         return response()->json(['error' => 'Failed to fetch data from DONKI API.'], 500);
     }
 }
