@@ -19,4 +19,9 @@ class GST extends Model
         'version_id',
         'intensity'
     ];
+
+    public function kpIndices()
+    {
+        return $this->hasMany(KpIndex::class, 'gst_id', 'id'); // Define the relationship
+    }
 }

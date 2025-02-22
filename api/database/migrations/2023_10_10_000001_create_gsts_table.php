@@ -26,7 +26,7 @@ class CreateGstsTable extends Migration
             $table->id();
             $table->foreignId('gst_id')->constrained('gsts')->onDelete('cascade');
             $table->timestamp('observed_time')->nullable();
-            $table->float('kp_index')->nullable();
+            $table->integer('kp_index')->nullable();
             $table->string('source')->nullable();
             $table->timestamps();
         });
