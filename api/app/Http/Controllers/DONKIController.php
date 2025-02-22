@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class DONKIController extends Controller
 {
+
     public function search(Request $request)
     {
         // Validate incoming request parameters
@@ -20,7 +21,7 @@ class DONKIController extends Controller
         ]);
 
         // Fetch data from the external API
-        $response = Http::withOptions(['verify' => false])->get('https://api.nasa.gov/DONKI/CMEAnalysis', [
+        $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
             'catalog' => 'ALL',
@@ -31,10 +32,6 @@ class DONKIController extends Controller
             'halfAngle' => $request->input('halfAngle', 30),
         ]);
 
-        Log::error('Failed to fetch data from DONKI API:', [
-            'status' => $response->status(),
-            'response' => $response->body()
-        ]);
         // Log the response for debugging
         Log::info('DONKI API Response:', [
             'status' => $response->status(),
