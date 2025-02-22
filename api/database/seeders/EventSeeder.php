@@ -21,7 +21,7 @@ class EventSeeder extends Seeder
             $startDate = "$year-01-01";
             $endDate = "$year-12-31";
 
-            $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/CME', [
+            $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/FLARE', [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'catalog' => 'M2M_CATALOG',
