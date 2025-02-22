@@ -10,9 +10,9 @@ class CME extends Model
     use HasFactory;
 
     protected $fillable = [
-        'event_id',
-        'start_date',
-        'end_date',
+        'begin_time',
+        'end_time',
+        'peak_time',
         'catalog',
         'source_location',
         'speed',
@@ -23,4 +23,5 @@ class CME extends Model
         'note',
 
     ];
+
 }
