@@ -20,7 +20,7 @@ class DONKIController extends Controller
         ]);
 
         // Fetch data from the external API
-        $response = Http::get('https://api.nasa.gov/DONKI/CMEAnalysis', [
+        $response = Http::get('http://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
             'catalog' => 'ALL',
@@ -31,6 +31,10 @@ class DONKIController extends Controller
             'halfAngle' => $request->input('halfAngle', 30),
         ]);
 
+        Log::error('Failed to fetch data from DONKI API:', [
+            'status' => $response->status(),
+            'response' => $response->body()
+        ]);
         // Log the response for debugging
         Log::info('DONKI API Response:', [
             'status' => $response->status(),
