@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Flare;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Models\CME;
 
 class EventSeeder extends Seeder
 {
@@ -33,21 +33,28 @@ class EventSeeder extends Seeder
                 Log::info("Fetched " . count($data) . " events for year $year from DONKI API.");
 
                 foreach ($data as $event) {
-                    CME::updateOrCreate(
-                        [
-                            'begin_time' => $event['startTime'],
-                            'end_time' => $event['endTime'],
-                            'peak_time' => $event['peakTime'],
-                            'catalog' => $event['catalog'],
-                            'source_location' => $event['sourceLocation'] ?? null,
-                            'speed' => $event['speed'] ?? null,
-                            'half_angle' => $event['halfAngle'] ?? null,
-                            'most_accurate_only' => $event['mostAccurateOnly'] ?? true,
-                            'intensity' => $this->convertClassToScale($event['classType'] ?? null),
-                            'class_type' => $event['classType'] ?? null,
-                            'note' => $event['note'] ?? null,
-                        ]
-                    );
+                    if (isset($event['flrID'], $event['beginTime'], $event['peakTime'], $event['endTime'], $event['catalog'])) {
+                        Flare::updateOrCreate(
+                            ['flr_id' => $event['flrID']],
+                            [
+                                'catalog' => $event['catalog'],
+                                'instrument' => $event['instruments'][0]['displayName'] ?? null,
+                                'begin_time' => $event['beginTime'],
+                                'peak_time' => $event['peakTime'],
+                                'end_time' => $event['endTime'],
+                                'class_type' => $event['classType'] ?? null,
+                                'source_location' => $event['sourceLocation'] ?? null,
+                                'active_region_num' => $event['activeRegionNum'] ?? null,
+                                'note' => $event['note'] ?? null,
+                                'submission_time' => $event['submissionTime'] ?? null,
+                                'version_id' => $event['versionId'] ?? null,
+                                'link' => $event['link'] ?? null,
+                                'intensity' => $this->convertClassToScale($event['classType'] ?? null),
+                            ]
+                        );
+                    } else {
+                        Log::warning("Missing required fields for event: " . json_encode($event));
+                    }
                 }
             } else {
                 Log::error("Failed to fetch data for year $year from DONKI API.");
