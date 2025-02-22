@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DONKIController extends Controller
 {
@@ -30,11 +31,17 @@ class DONKIController extends Controller
             'halfAngle' => $request->input('halfAngle', 30),
         ]);
 
+        // Log the response for debugging
+        Log::info('DONKI API Response:', ['response' => $response->json()]);
+
         // Check for a successful response from the API
         if ($response->successful()) {
             // Return the data from the API as JSON
             return response()->json($response->json(), 200);
         }
+
+        // Log the error response for debugging
+        Log::error('Failed to fetch data from DONKI API:', ['response' => $response->body()]);
 
         // If the external API fails, return an error
         return response()->json(['error' => 'Failed to fetch data from DONKI API.'], 500);
