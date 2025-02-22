@@ -35,7 +35,6 @@ class DONKIController extends Controller
         ]);
 
         // Log the response for debugging
-        Log::info('DONKI API response', ['response' => $response->json()]);
 
         // Check for a successful response from the API
         if ($response->successful()) {
