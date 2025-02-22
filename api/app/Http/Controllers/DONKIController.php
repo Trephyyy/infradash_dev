@@ -20,7 +20,7 @@ class DONKIController extends Controller
         ]);
 
         // Fetch data from the external API
-        $response = Http::get('http://api.nasa.gov/DONKI/CMEAnalysis', [
+        $response = Http::withOptions(['verify' => false])->get('https://api.nasa.gov/DONKI/CMEAnalysis', [
             'startDate' => $validated['startDate'],
             'endDate' => $validated['endDate'],
             'catalog' => 'ALL',
