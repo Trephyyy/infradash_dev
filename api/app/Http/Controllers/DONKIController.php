@@ -45,7 +45,7 @@ class DONKIController extends Controller
                 default:
                     $data = [
                         'flares' => Flare::whereBetween('begin_time', [$startDate, $endDate])->get(),
-                        'cmes' => CME::whereBetween('start_time', [$startDate, $endDate])->get(),
+                        'cmes' => CME::whereBetween('start_time', [$startDate, $endDate])->with('analyses')->get(),
                         'gsts' => GST::whereBetween('start_time', [$startDate, $endDate])->with('kpIndices')->get(),
                     ];
                     break;
