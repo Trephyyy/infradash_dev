@@ -14,35 +14,30 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        $startYear = 2024;
+        $startYear = 2010;
         $currentYear = date('Y');
 
         for ($year = $startYear; $year <= $currentYear; $year++) {
             $startDate = "$year-01-01";
             $endDate = "$year-12-31";
-            $response = Http::get('https://api.nasa.gov/DONKI/FLARE', [
+
+            $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/CME', [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'catalog' => 'M2M_CATALOG',
                 'api_key' => env('NASA_API_KEY'),
             ]);
-            /* 
-                        $response = Http::withOptions(['verify' => '/etc/ssl/certs/ca-certificates.crt'])->get('https://api.nasa.gov/DONKI/CME', [
-                            'startDate' => $startDate,
-                            'endDate' => $endDate,
-                            'catalog' => 'M2M_CATALOG',
-                            'api_key' => env('NASA_API_KEY'),
-                        ]); */
 
             if ($response->successful()) {
                 $data = $response->json();
+                Log::info("Fetched " . count($data) . " events for year $year from DONKI API.");
 
                 foreach ($data as $event) {
                     CME::updateOrCreate(
-
+                        ['event_id' => $event['eventID']],
                         [
-                            'start_date' => $event['beginTime'],
-                            'end_date' => $event['endTime'],
+                            'begin_time' => $event['startTime'],
+                            'end_time' => $event['endTime'],
                             'peak_time' => $event['peakTime'],
                             'catalog' => $event['catalog'],
                             'source_location' => $event['sourceLocation'] ?? null,
