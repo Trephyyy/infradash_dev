@@ -26,6 +26,6 @@ class CME extends Model
 
     public function analyses()
     {
-        return $this->hasMany(CMEAnalysis::class);
+        return $this->hasMany(CMEAnalysis::class, 'cme_id', 'id');
     }
 }
