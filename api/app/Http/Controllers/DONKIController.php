@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\CME;
 use App\Models\GST;
 use App\Models\Flare;
+use App\Models\CMEAnalysis;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class DONKIController extends Controller
 {
@@ -16,7 +17,7 @@ class DONKIController extends Controller
         $validated = $request->validate([
             'startDate' => 'required|date',
             'endDate' => 'required|date|after_or_equal:startDate',
-            'eventType' => 'required|string|in:ALL,FLARE,CMES,GST', // Added new event types
+            'eventType' => 'required|string|in:ALL,FLARE,CMES,GST,Analisys', // Added new event types
             'mostAccurateOnly' => 'boolean',
             'speed' => 'integer',
             'halfAngle' => 'integer',
@@ -37,6 +38,9 @@ class DONKIController extends Controller
                     break;
                 case 'CMES':
                     $data = CME::whereBetween('start_time', [$startDate, $endDate])->with('analyses')->get();
+                    break;
+                case 'Analisys':
+                    $data = CMEAnalysis::whereBetween('time21_5', [$startDate, $endDate])->get();
                     break;
                 case 'GST':
                     $data = GST::whereBetween('start_time', [$startDate, $endDate])->with('kpIndices')->get();
@@ -69,6 +73,9 @@ class DONKIController extends Controller
                     break;
                 case 'GST':
                     $response = Http::withOptions(['verify' => false, 'timeout' => 60])->retry(3, 100)->get($apiUrl . 'GST', $params);
+                    break;
+                case 'Analisys':
+                    $response = Http::withOptions(['verify' => false, 'timeout' => 60])->retry(3, 100)->get($apiUrl . 'Analisys', $params);
                     break;
                 case 'ALL':
                 default:
