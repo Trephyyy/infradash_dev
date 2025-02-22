@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Log;
 
 class DONKIController extends Controller
 {
-
     public function search(Request $request)
     {
         // Validate incoming request parameters
@@ -40,11 +39,55 @@ class DONKIController extends Controller
 
         // Check for a successful response from the API
         if ($response->successful()) {
+            $data = $response->json();
+
+            // Convert class to intensity scale
+            foreach ($data as &$event) {
+                if (isset($event['classType'])) {
+                    $event['intensity'] = $this->convertClassToScale($event['classType']);
+                }
+            }
+
             // Return the data from the API as JSON
-            return response()->json($response->json(), 200);
+            return response()->json($data, 200);
         }
 
         return response()->json(['error' => 'Failed to fetch data from DONKI API.'], 500);
+    }
+
+    function convertClassToScale($classType)
+    {
+        // Map class types to intensity ranges (scaled from 1-100)
+        $classMap = [
+            "A" => [1, 10],  // A-class: 1-10 (lowest intensity)
+            "B" => [11, 20], // B-class: 11-20
+            "C" => [21, 40], // C-class: 21-40
+            "M" => [41, 70], // M-class: 41-70
+            "X" => [71, 100] // X-class: 71-100 (highest intensity)
+        ];
+
+        // Extract the letter class and number (e.g., "M2.3" -> "M", 2.3)
+        if (isset($classMap[$classType[0]])) {
+            $baseClass = $classType[0];
+            $number = floatval(substr($classType, 1));
+
+            // Default to 1 if no number is provided (e.g., "M" -> "M1")
+            if ($number === 0) {
+                $number = 1.0;
+            }
+
+            // Get the class range
+            list($minValue, $maxValue) = $classMap[$baseClass];
+
+            // Normalize the number within the given class range (A=1-10, B=11-20, etc.)
+            $intensityScale = $minValue + ($number * ($maxValue - $minValue) / 10);
+
+            // Return the rounded intensity value
+            return round($intensityScale);
+        } else {
+            Log::error("Invalid class type format");
+            return null;
+        }
     }
 
     private function getApiEndpoint($eventType)
