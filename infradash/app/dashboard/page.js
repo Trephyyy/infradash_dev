@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [futureData, setFutureData] = useState([]);  // New state for future predictions
   const [loading, setLoading] = useState(false);
 
-  const [warnings, setWarnings] = useState("No warnings");  // New state for future predictions
+  const [warnings, setWarnings] = useState([]);  // New state for future predictions
   const [flareRange, setFlareRange] = useState(30);
   const [cmeRange, setCmeRange] = useState(30);
   const [futureRange, setFutureRange] = useState(30);  // New state for future predictions
@@ -62,6 +62,7 @@ export default function Dashboard() {
       }));
       console.log('Fetched future data:', processedData);
       setFutureData(processedData);
+      setWarnings(data.warnings); // Set warnings data
     } catch (error) {
       console.error("Error fetching future predictions:", error);
     }
@@ -104,7 +105,7 @@ export default function Dashboard() {
             Solar Event Dashboard
           </h1>
 
-          <motion.div className="w-full max-w-screen-xl h-[600px]" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
+          <motion.div className="w-full max-w-screen-xl h-[800px]" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
             <CombinedGrafanaPanel title="Combined Solar Events Over Time" fetchData={fetchData} combinedRange={combinedRange} setCombinedRange={setCombinedRange} />
           </motion.div>
 
@@ -118,7 +119,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 w-full max-w-screen-xl mt-8 items-center">
             <motion.div 
-              className="h-[500px] flex justify-end"
+              className="h-[700px] flex justify-end"
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.3 }}
@@ -133,7 +134,7 @@ export default function Dashboard() {
                 transition={{ repeat: Infinity, duration: 3 }}
               />
               <motion.div 
-                className="h-[450px] w-[3px] bg-gradient-to-b from-orange-500 to-yellow-300 rounded-full shadow-lg mt-0"
+                className="h-[650px] w-[3px] bg-gradient-to-b from-orange-500 to-yellow-300 rounded-full shadow-lg mt-0"
                 initial={{ opacity: 0.8 }}
                 animate={{ opacity: [0.8, 1, 0.8] }}
                 transition={{ repeat: Infinity, duration: 2 }}
@@ -141,7 +142,7 @@ export default function Dashboard() {
             </div>
 
             <motion.div 
-              className="h-[500px] flex justify-start"
+              className="h-[700px] flex justify-start"
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.4 }}
@@ -158,7 +159,28 @@ export default function Dashboard() {
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
               Future Predictions ({futureRange} Days)
             </h2>
-            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>          </motion.div>
+            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>          
+          </motion.div>
+
+          {/* Warnings for the next year */}
+          <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
+            <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-500">
+              Warnings for the Next Year
+            </h2>
+            <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[80%] mx-auto text-white">
+              {warnings.length > 0 ? (
+                <ul>
+                  {warnings.map((warning, index) => (
+                    <li key={index} className={`mb-2 p-2 rounded ${warning.code === 'red' ? 'bg-red-500' : warning.code === 'orange' ? 'bg-orange-500' : 'bg-yellow-500'}`}>
+                      <strong>{warning.code.toUpperCase()}:</strong> Severity {warning.severity} on {new Date(warning.timestamp).toLocaleString()}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No warnings for the next year.</p>
+              )}
+            </div>
+          </motion.div>
 
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">
