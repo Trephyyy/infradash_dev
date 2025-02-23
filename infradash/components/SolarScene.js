@@ -48,12 +48,12 @@ const Sun = ({ onHover, isHovered, setIsHovered, solarEvents }) => {
     >
       <sphereGeometry args={[3, 128, 128]} />
       <GradientMaterial />
-      <SolarEventMarkers data={solarEvents} onHover={onHover} />
+      <SolarEventMarkers data={solarEvents} onHover={onHover} setIsHovered={setIsHovered} />
     </mesh>
   );
 };
 
-const SolarEventMarkers = ({ data = [], onHover }) => {
+const SolarEventMarkers = ({ data = [], onHover, setIsHovered }) => {
   const [hovered, setHovered] = useState(null);
   const lastHoveredRef = useRef(null);
   const hoverTimeout = useRef(null);
@@ -89,6 +89,7 @@ const SolarEventMarkers = ({ data = [], onHover }) => {
             position={event.position}
             onPointerOver={(e) => {
               e.stopPropagation();
+              setIsHovered(true);
               if (lastHoveredRef.current !== event) {
                 lastHoveredRef.current = event;
                 clearTimeout(hoverTimeout.current);
@@ -107,6 +108,7 @@ const SolarEventMarkers = ({ data = [], onHover }) => {
               }
             }}
             onPointerOut={() => {
+              setIsHovered(false);
               if (lastHoveredRef.current !== null) {
                 lastHoveredRef.current = null;
                 clearTimeout(hoverTimeout.current);
