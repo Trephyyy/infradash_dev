@@ -2,9 +2,15 @@
 import { useState } from 'react';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import axios from 'axios';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
 
   const particlesInit = async (engine) => {
     console.log(engine);
@@ -19,7 +25,7 @@ export default function AuthPage() {
   const particlesOptions = {
     background: {
       color: {
-        value: "#000000",
+        value: "#ccc",
       },
     },
     fpsLimit: 60,
@@ -63,6 +69,27 @@ export default function AuthPage() {
     detectRetina: true,
   };
 
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = isLogin ? 'https://api.infradash.space/login' : 'https://api.infradash.space/register';
+    try {
+      const response = await axios.post(url, formData);
+      console.log('Response:', response.data);
+      // Handle successful response (e.g., redirect to dashboard)
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      // Handle error response (e.g., show error message)
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-black relative">
       <Particles
@@ -98,34 +125,38 @@ export default function AuthPage() {
 
         {/* Login Form */}
         {isLogin ? (
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="login-username"
+                htmlFor="username"
                 className="block text-sm font-medium text-gray-700"
               >
                 Username
               </label>
               <input
                 type="text"
-                id="login-username"
+                id="username"
                 placeholder="Enter your username"
                 required
+                value={formData.username}
+                onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
             <div>
               <label
-                htmlFor="login-password"
+                htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
               >
                 Password
               </label>
               <input
                 type="password"
-                id="login-password"
+                id="password"
                 placeholder="Enter your password"
                 required
+                value={formData.password}
+                onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
@@ -135,49 +166,55 @@ export default function AuthPage() {
           </form>
         ) : (
           // Register Form
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="register-username"
+                htmlFor="username"
                 className="block text-sm font-medium text-gray-700"
               >
                 Username
               </label>
               <input
                 type="text"
-                id="register-username"
+                id="username"
                 placeholder="Choose a username"
                 required
+                value={formData.username}
+                onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
             <div>
               <label
-                htmlFor="register-email"
+                htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
               >
                 Email
               </label>
               <input
                 type="email"
-                id="register-email"
+                id="email"
                 placeholder="Enter your email"
                 required
+                value={formData.email}
+                onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
             <div>
               <label
-                htmlFor="register-password"
+                htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
               >
                 Password
               </label>
               <input
                 type="password"
-                id="register-password"
+                id="password"
                 placeholder="Create a password"
                 required
+                value={formData.password}
+                onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
