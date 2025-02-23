@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [futureData, setFutureData] = useState([]);  // New state for future predictions
   const [loading, setLoading] = useState(false);
 
-  const [warnings, setWarnings] = useState([]);  // New state for future predictions
+  const [warnings, setWarnings] = useState("No warnings");  // New state for future predictions
   const [flareRange, setFlareRange] = useState(30);
   const [cmeRange, setCmeRange] = useState(30);
   const [futureRange, setFutureRange] = useState(30);  // New state for future predictions
@@ -49,26 +49,26 @@ export default function Dashboard() {
     }
   };
 
-  // Fetch future prediction data with respect to futureRange
+  // Fetch future prediction data
   const fetchFutureData = async () => {
     try {
-      const url = `https://api.infradash.space/predict?days=${futureRange}`;
+      const url = `https://api.infradash.space/predict?Days=${futureRange}`;
       const res = await fetch(url);
       const data = await res.json();
-  
+
+
       const processedData = data.data.map((item) => ({
         time: new Date(item.Timestamp).getTime(),
         intensity: item.Severity,
       }));
-      console.log('Fetched future data:', processedData);
+
       setFutureData(processedData);
-      setWarnings(data.warnings); // Set warnings data
+      setWarnings(data.warnings);
     } catch (error) {
       console.error("Error fetching future predictions:", error);
     }
   };
 
-  // Fetch data for the specific time ranges
   useEffect(() => {
     fetchData(flareRange, "FLARE", setFlareData);
   }, [flareRange]);
@@ -82,15 +82,14 @@ export default function Dashboard() {
     fetchData(combinedRange, "CMES", setCmeData);
   }, [combinedRange]);
 
-  // Fetch future data when futureRange changes
   useEffect(() => {
-    fetchFutureData();  // Fetch future predictions on time frame change
-}, [futureRange]);
+    fetchFutureData();  // Fetch future predictions on mount
+  }, []);
 
   return (
     <>
       <Head>
-        <title>Solar Event Dashboard</title>
+        <title>Dashboard</title>
         <meta name="description" content="Monitor solar flares, coronal mass ejections (CME), and predictions for solar activity. Stay up to date with real-time solar event data." />
       </Head>
 
@@ -105,7 +104,7 @@ export default function Dashboard() {
             Solar Event Dashboard
           </h1>
 
-          <motion.div className="w-full max-w-screen-xl " initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
+          <motion.div className="w-full max-w-screen-xl h-[600px]" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
             <CombinedGrafanaPanel title="Combined Solar Events Over Time" fetchData={fetchData} combinedRange={combinedRange} setCombinedRange={setCombinedRange} />
           </motion.div>
 
@@ -117,76 +116,49 @@ export default function Dashboard() {
             transition={{ duration: 1 }}
           />
 
-          <div className="grid grid-cols-1 gap-8 w-full max-w-screen-xl mt-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 w-full max-w-screen-xl mt-8 items-center">
             <motion.div 
-              className="h-[600px] flex justify-center w-full" // Centered and enlarged
+              className="h-[500px] flex justify-end"
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.3 }}
             >
-              <GrafanaPanel 
-                title="Solar Flare Intensity Over Time" 
-                data={flareData} 
-                setSelectedRange={setFlareRange} 
-                selectedRange={flareRange} 
-                borderColor="#FF4500" // Orange-red
-                backgroundColor="rgba(255,69,0,0.2)" // Light orange-red
-                buttonColor="#FF4500" // Orange-red
-              />
+              <GrafanaPanel title="Solar Flare Intensity Over Time" data={flareData} setSelectedRange={setFlareRange} selectedRange={flareRange} />
             </motion.div>
 
+            <div className="hidden md:flex flex-col items-center justify-center w-[5px]">
+              <motion.div 
+                className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full shadow-2xl ring-4 ring-orange-500/30 animate-pulse"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 3 }}
+              />
+              <motion.div 
+                className="h-[450px] w-[3px] bg-gradient-to-b from-orange-500 to-yellow-300 rounded-full shadow-lg mt-0"
+                initial={{ opacity: 0.8 }}
+                animate={{ opacity: [0.8, 1, 0.8] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              />
+            </div>
+
             <motion.div 
-              className="h-[600px] flex justify-center w-full" // Centered and enlarged
+              className="h-[500px] flex justify-start"
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.4 }}
             >
-              <GrafanaPanel 
-                title="Coronal Mass Ejections (CME) Over Time" 
-                data={cmeData} 
-                setSelectedRange={setCmeRange} 
-                selectedRange={cmeRange} 
-                borderColor="#1E90FF" // Dodger blue
-                backgroundColor="rgba(30,144,255,0.2)" // Light dodger blue
-                buttonColor="#1E90FF" // Dodger blue
-              />
+              <GrafanaPanel title="Coronal Mass Ejections (CME) Over Time" data={cmeData} setSelectedRange={setCmeRange} selectedRange={cmeRange} />
             </motion.div>
+            <div>
+              { warnings}
+            </div>
           </div>
 
           {/* Future Predictions Graph */}
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-             AI Future Predictions ({futureRange} Days)
+              Future Predictions (30 Days)
             </h2>
-            <GrafanaPanel 
-              title="Predicted Solar Activity Over Time" 
-              data={futureData} 
-              setSelectedRange={setFutureRange} 
-              selectedRange={futureRange}
-              borderColor="#32CD32" // Lime green
-              backgroundColor="rgba(50,205,50,0.2)" // Light lime green
-              buttonColor="#32CD32" // Lime green
-            />          
-          </motion.div>
-
-          {/* Warnings for the next year */}
-          <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
-            <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-500">
-              Warnings for selected period
-            </h2>
-            <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[80%] mx-auto text-white">
-              {warnings.length > 0 ? (
-                <ul>
-                  {warnings.map((warning, index) => (
-                    <li key={index} className={`mb-2 p-2 rounded ${warning.code === 'red' ? 'bg-red-700' : warning.code === 'orange' ? 'bg-orange-700' : 'bg-yellow-700'}`}>
-                      <strong>{warning.code.toUpperCase()}:</strong> Severity {warning.severity} on {new Date(warning.timestamp).toLocaleString().split(',')[0]}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No warnings for the selected period.</p>
-              )}
-            </div>
+            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>
           </motion.div>
 
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
