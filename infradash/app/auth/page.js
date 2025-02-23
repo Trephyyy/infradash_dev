@@ -24,7 +24,7 @@ export default function AuthPage() {
   const particlesOptions = {
     background: {
       color: {
-        value: "#ccc",
+        value: "#000",
       },
     },
     fpsLimit: 60,
@@ -79,17 +79,33 @@ export default function AuthPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = isLogin ? 'https://api.infradash.space/login' : 'https://api.infradash.space/register';
+    
     try {
+      // Step 1: Get the CSRF token from Laravel Sanctum
+      await fetch('https://api.infradash.space/sanctum/csrf-cookie', {
+        method: 'GET',
+        credentials: 'include',  // Important for Laravel to set the cookie
+      });
+  
+      // Step 2: Make the login or registration request
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        credentials: 'include',  // Send cookies with the request
       });
+  
       const data = await response.json();
       console.log('Response:', data);
+  
       // Handle successful response (e.g., redirect to dashboard)
+      if (response.ok) {
+        // Handle successful login/registration (e.g., store token, redirect)
+      } else {
+        // Handle error message from the backend
+      }
     } catch (error) {
       console.error('Error:', error.message);
       // Handle error response (e.g., show error message)
