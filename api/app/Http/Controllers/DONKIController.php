@@ -28,7 +28,7 @@ class DONKIController extends Controller
         $startDate = $validated['startDate'];
         $endDate = $validated['endDate'];
         $dbStartDate = '2024-12-31';
-        $dbEndDate = '2025-02-22';
+        $dbEndDate = '2025-02-23';
 
         if ($startDate >= $dbStartDate && $endDate <= $dbEndDate) {
             // Fetch data from the database
