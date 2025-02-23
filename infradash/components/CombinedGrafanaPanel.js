@@ -4,11 +4,11 @@ import "chart.js/auto";
 
 export default function CombinedGrafanaPanel({
   title,
-  fetchData, // ✅ Ensure fetchData is passed as a prop
-  combinedRange, // ✅ Ensure combinedRange is passed from the parent
-  setCombinedRange, // ✅ Function to update the range for the combined graph
+  fetchData, // Ensure fetchData is passed as a prop
+  combinedRange, // Ensure combinedRange is passed from the parent
+  setCombinedRange, // Function to update the range for the combined graph
 }) {
-  // ✅ Independent state for combined graph data
+  // Independent state for combined graph data
   const [combinedFlareData, setCombinedFlareData] = useState([]);
   const [combinedCMEData, setCombinedCMEData] = useState([]);
   const [chartData, setChartData] = useState({
@@ -48,13 +48,13 @@ export default function CombinedGrafanaPanel({
     },
   };
 
-  // ✅ Fetch data for the combined graph independently
+  // Fetch data for the combined graph independently
   useEffect(() => {
     fetchData(combinedRange, "FLARE", setCombinedFlareData);
     fetchData(combinedRange, "CMES", setCombinedCMEData);
   }, [combinedRange, fetchData]);
 
-  // ✅ Process data for the chart
+  // Process data for the chart
   useEffect(() => {
     if (!combinedFlareData.length && !combinedCMEData.length) return;
 
@@ -113,7 +113,7 @@ export default function CombinedGrafanaPanel({
   }, [combinedFlareData, combinedCMEData]);
 
   return (
-    <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[80%] mx-auto mb-8">
+    <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-full mx-auto mb-8">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-white">{title}</h2>
         <div className="flex gap-2 mt-2">
@@ -125,7 +125,7 @@ export default function CombinedGrafanaPanel({
                   ? "bg-[#D65600] border-[#D65600] text-black"
                   : "border-[#D65600] bg-transparent text-[#D65600]"
               } hover:bg-[#D65600] hover:text-black hover:border-[#D65600]`}
-              onClick={() => setCombinedRange(parseInt(range))} // ✅ Change only the combined graph range
+              onClick={() => setCombinedRange(parseInt(range))} // Change only the combined graph range
             >
               {range === "7"
                 ? "7D"
