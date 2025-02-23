@@ -212,7 +212,7 @@ const SolarScene = () => {
             padding: "8px",
             borderRadius: "4px",
             pointerEvents: "none",
-            transform: "translate(0, 0)", // Move directly on the cursor
+            transform: "translate(5px, 5px)", // Move directly on the cursor
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
             maxWidth: "200px",
