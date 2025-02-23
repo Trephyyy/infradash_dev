@@ -91,6 +91,7 @@ export default function Dashboard() {
     <>
       <Head>
         <title>Solar Event Dashboard</title>
+        <link rel="icon" href="/logo.png" />
         <meta name="description" content="Monitor solar flares, coronal mass ejections (CME), and predictions for solar activity. Stay up to date with real-time solar event data." />
       </Head>
 
