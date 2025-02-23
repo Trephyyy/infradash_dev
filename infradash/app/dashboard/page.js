@@ -84,7 +84,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchFutureData();  // Fetch future predictions on mount
-  }, []);
+  }, [futureRange]);
 
   return (
     <>

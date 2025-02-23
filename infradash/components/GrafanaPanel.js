@@ -73,7 +73,7 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
         {/* Hide range buttons if setSelectedRange is not provided (for future predictions) */}
         {setSelectedRange && (
           <div className="flex gap-2 mt-2">
-            {["7", "14", "30", "90", "182"].map(range => (
+            {["7", "14", "30", "90", "180"].map(range => (
               <button
                 key={range}
                 className={`px-3 py-1 text-xs rounded border transition ${
