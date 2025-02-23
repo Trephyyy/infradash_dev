@@ -50,7 +50,7 @@ const Home = () => {
         <meta name="description" content="Get the latest insights and predictions on solar flare activity. Stay informed about space weather events that impact our modern world." />
       </Head>
 
-      <div id="vanta-bg" className="min-h-screen relative bg-black text-white">
+      <div  suppressHydrationWarning={true} id="vanta-bg" className="min-h-screen relative bg-black text-white">
         {/* Overlay for improved text contrast */}
         <div className="absolute inset-0 bg-black opacity-60"></div>
 

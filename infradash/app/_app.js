@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }) {
      <Head>
         <link rel="icon" href="/logo.png" />
       </Head>
-    <ThemeProvider suppressHydrationWarning theme={theme}>
+    <ThemeProvider suppressHydrationWarning={true} theme={theme}>
       <CssBaseline />
       <Navbar />
       <Component {...pageProps} />
