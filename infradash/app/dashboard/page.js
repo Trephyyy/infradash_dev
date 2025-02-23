@@ -119,7 +119,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 w-full max-w-screen-xl mt-8 items-center">
             <motion.div 
-              className="h-[400px] flex justify-end w-full md:w-[600px]" // Adjusted width
+              className="h-[400px] flex justify-end w-full md:w-[800px]" // Adjusted width
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.3 }}
@@ -150,7 +150,7 @@ export default function Dashboard() {
             </div>
 
             <motion.div 
-              className="h-[400px] flex justify-start w-full md:w-[600px]" // Adjusted width
+              className="h-[400px] flex justify-start w-full md:w-[800px]" // Adjusted width
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.4 }}
