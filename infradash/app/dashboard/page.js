@@ -105,7 +105,7 @@ export default function Dashboard() {
             Solar Event Dashboard
           </h1>
 
-          <motion.div className="w-full max-w-screen-xl h-[800px]" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
+          <motion.div className="w-full max-w-screen-xl " initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
             <CombinedGrafanaPanel title="Combined Solar Events Over Time" fetchData={fetchData} combinedRange={combinedRange} setCombinedRange={setCombinedRange} />
           </motion.div>
 
