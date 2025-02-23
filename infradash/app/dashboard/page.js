@@ -178,7 +178,7 @@ export default function Dashboard() {
               {warnings.length > 0 ? (
                 <ul>
                   {warnings.map((warning, index) => (
-                    <li key={index} className={`mb-2 p-2 rounded ${warning.code === 'red' ? 'bg-red-600' : warning.code === 'orange' ? 'bg-orange-600' : 'bg-yellow-600'}`}>
+                    <li key={index} className={`mb-2 p-2 rounded ${warning.code === 'red' ? 'bg-red-700' : warning.code === 'orange' ? 'bg-orange-700' : 'bg-yellow-700'}`}>
                       <strong>{warning.code.toUpperCase()}:</strong> Severity {warning.severity} on {new Date(warning.timestamp).toLocaleString().split(',')[0]}
                     </li>
                   ))}
