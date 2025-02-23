@@ -102,9 +102,7 @@ export default function Dashboard() {
         className="p-6 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col items-center"
       >
         <div className="max-w-screen-xl w-full relative">
-          <div className="absolute top-0 right-0 p-4">
-            <img src="/logo.png" alt="Logo" className="h-12 w-12" />
-          </div>
+       
           <h1 className="text-5xl font-extrabold mb-8 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">
             Solar Event Dashboard
           </h1>
