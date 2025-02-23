@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-import axios from 'axios';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -81,11 +80,18 @@ export default function AuthPage() {
     e.preventDefault();
     const url = isLogin ? 'https://api.infradash.space/login' : 'https://api.infradash.space/register';
     try {
-      const response = await axios.post(url, formData);
-      console.log('Response:', response.data);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+      console.log('Response:', data);
       // Handle successful response (e.g., redirect to dashboard)
     } catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+      console.error('Error:', error.message);
       // Handle error response (e.g., show error message)
     }
   };
