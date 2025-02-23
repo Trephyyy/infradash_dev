@@ -63,7 +63,8 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
         ]
       });
     }
-  }, [data, title]);
+  }, [data, title, selectedRange]); // Added selectedRange here
+  
 
   return (
     <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[80%] mx-auto">
