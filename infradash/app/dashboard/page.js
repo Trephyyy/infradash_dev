@@ -49,13 +49,12 @@ export default function Dashboard() {
     }
   };
 
-  // Fetch future prediction data
-  const fetchFutureData = async () => {
+  // Fetch future prediction data with respect to futureRange
+  const fetchFutureData = async (rangeDays) => {
     try {
-      const url = `https://api.infradash.space/predict?Days=${futureRange}`;
+      const url = `https://api.infradash.space/predict?Days=${rangeDays}`;
       const res = await fetch(url);
       const data = await res.json();
-
 
       const processedData = data.data.map((item) => ({
         time: new Date(item.Timestamp).getTime(),
@@ -69,6 +68,7 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch data for the specific time ranges
   useEffect(() => {
     fetchData(flareRange, "FLARE", setFlareData);
   }, [flareRange]);
@@ -82,8 +82,9 @@ export default function Dashboard() {
     fetchData(combinedRange, "CMES", setCmeData);
   }, [combinedRange]);
 
+  // Fetch future data when futureRange changes
   useEffect(() => {
-    fetchFutureData();  // Fetch future predictions on mount
+    fetchFutureData(futureRange);  // Fetch future predictions when the time range changes
   }, [futureRange]);
 
   return (
@@ -149,14 +150,14 @@ export default function Dashboard() {
               <GrafanaPanel title="Coronal Mass Ejections (CME) Over Time" data={cmeData} setSelectedRange={setCmeRange} selectedRange={cmeRange} />
             </motion.div>
             <div>
-              { warnings}
+              { warnings }
             </div>
           </div>
 
           {/* Future Predictions Graph */}
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-              Future Predictions (30 Days)
+              Future Predictions ({futureRange} Days)
             </h2>
             <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>
           </motion.div>
