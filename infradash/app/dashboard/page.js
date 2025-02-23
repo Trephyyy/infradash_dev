@@ -117,9 +117,9 @@ export default function Dashboard() {
             transition={{ duration: 1 }}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 w-full max-w-screen-xl mt-8 items-center">
+          <div className="grid grid-cols-1 gap-8 w-full max-w-screen-xl mt-8 items-center">
             <motion.div 
-              className="h-[400px] flex justify-end w-full md:w-[800px]" // Adjusted width
+              className="h-[600px] flex justify-center w-full" // Centered and enlarged
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.3 }}
@@ -135,22 +135,8 @@ export default function Dashboard() {
               />
             </motion.div>
 
-            <div className="hidden md:flex flex-col items-center justify-center w-[5px]">
-              <motion.div 
-                className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full shadow-2xl ring-4 ring-orange-500/30 animate-pulse"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 3 }}
-              />
-              <motion.div 
-                className="h-[650px] w-[3px] bg-gradient-to-b from-orange-500 to-yellow-300 rounded-full shadow-lg mt-0"
-                initial={{ opacity: 0.8 }}
-                animate={{ opacity: [0.8, 1, 0.8] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              />
-            </div>
-
             <motion.div 
-              className="h-[400px] flex justify-start w-full md:w-[800px]" // Adjusted width
+              className="h-[600px] flex justify-center w-full" // Centered and enlarged
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.4 }}
@@ -165,7 +151,6 @@ export default function Dashboard() {
                 buttonColor="#1E90FF" // Dodger blue
               />
             </motion.div>
-
           </div>
 
           {/* Future Predictions Graph */}
