@@ -105,7 +105,7 @@ export default function Dashboard() {
             Solar Event Dashboard
           </h1>
 
-          <motion.div className="w-full max-w-screen-xl h-[800px]" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
+          <motion.div className="w-full max-w-screen-xl h-[600px]" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
             <CombinedGrafanaPanel title="Combined Solar Events Over Time" fetchData={fetchData} combinedRange={combinedRange} setCombinedRange={setCombinedRange} />
           </motion.div>
 
@@ -119,7 +119,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 w-full max-w-screen-xl mt-8 items-center">
             <motion.div 
-              className="h-[700px] flex justify-end w-full md:w-[45%]" // Adjusted width
+              className="h-[500px] flex justify-end"
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.3 }}
@@ -134,7 +134,7 @@ export default function Dashboard() {
                 transition={{ repeat: Infinity, duration: 3 }}
               />
               <motion.div 
-                className="h-[650px] w-[3px] bg-gradient-to-b from-orange-500 to-yellow-300 rounded-full shadow-lg mt-0"
+                className="h-[450px] w-[3px] bg-gradient-to-b from-orange-500 to-yellow-300 rounded-full shadow-lg mt-0"
                 initial={{ opacity: 0.8 }}
                 animate={{ opacity: [0.8, 1, 0.8] }}
                 transition={{ repeat: Infinity, duration: 2 }}
@@ -142,7 +142,7 @@ export default function Dashboard() {
             </div>
 
             <motion.div 
-              className="h-[700px] flex justify-start w-full md:w-[45%]" // Adjusted width
+              className="h-[500px] flex justify-start"
               initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.4 }}
@@ -159,8 +159,7 @@ export default function Dashboard() {
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
               Future Predictions ({futureRange} Days)
             </h2>
-            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>          
-          </motion.div>
+            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>          </motion.div>
 
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">
