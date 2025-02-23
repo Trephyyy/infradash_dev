@@ -62,7 +62,6 @@ export default function Dashboard() {
       }));
       console.log('Fetched future data:', processedData);
       setFutureData(processedData);
-      setWarnings(data.warnings); // Assuming warnings are handled
     } catch (error) {
       console.error("Error fetching future predictions:", error);
     }
