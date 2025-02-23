@@ -149,9 +149,7 @@ export default function Dashboard() {
             >
               <GrafanaPanel title="Coronal Mass Ejections (CME) Over Time" data={cmeData} setSelectedRange={setCmeRange} selectedRange={cmeRange} />
             </motion.div>
-            <div>
-              { warnings }
-            </div>
+            
           </div>
 
           {/* Future Predictions Graph */}
