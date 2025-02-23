@@ -6,9 +6,9 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <link rel="icon" href="/logo.png" />
           <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
           <script src="https://cdn.jsdelivr.net/npm/vanta@1.0.0/dist/vanta.dots.min.js"></script>
-          <link rel="icon" href="/logo.png" />
         </Head>
         <body>
           <Main />

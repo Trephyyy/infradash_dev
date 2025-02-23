@@ -6,11 +6,16 @@ const theme = createTheme();
 
 function MyApp({ Component, pageProps }) {
   return (
+    <>
+     <Head>
+        <link rel="icon" href="/logo.png" />
+      </Head>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Navbar />
       <Component {...pageProps} />
     </ThemeProvider>
+    </>
   );
 }
 
