@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [futureData, setFutureData] = useState([]);  // New state for future predictions
   const [loading, setLoading] = useState(false);
 
+  const [warnings, setWarnings] = useState("No warnings");  // New state for future predictions
   const [flareRange, setFlareRange] = useState(30);
   const [cmeRange, setCmeRange] = useState(30);
   const [combinedRange, setCombinedRange] = useState(30);
@@ -61,6 +62,7 @@ export default function Dashboard() {
       }));
 
       setFutureData(processedData);
+      setWarnings(data.warnings);
     } catch (error) {
       console.error("Error fetching future predictions:", error);
     }
@@ -146,7 +148,7 @@ export default function Dashboard() {
               <GrafanaPanel title="Coronal Mass Ejections (CME) Over Time" data={cmeData} setSelectedRange={setCmeRange} selectedRange={cmeRange} />
             </motion.div>
             <div>
-              { data.warnings}
+              { warnings}
             </div>
           </div>
 
