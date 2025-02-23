@@ -1,0 +1,192 @@
+"use client";
+import { useState } from 'react';
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
+
+export default function AuthPage() {
+  const [isLogin, setIsLogin] = useState(true);
+
+  const particlesInit = async (engine) => {
+    console.log(engine);
+    // Check if checkVersion exists before calling loadFull
+    if (engine && typeof engine.checkVersion === 'function') {
+      await loadFull(engine);
+    } else {
+      console.warn("engine.checkVersion is not available. Skipping loadFull.");
+    }
+  };
+
+  const particlesOptions = {
+    background: {
+      color: {
+        value: "#000000",
+      },
+    },
+    fpsLimit: 60,
+    interactivity: {
+      events: {
+        onClick: { enable: true, mode: "push" },
+        onHover: { enable: true, mode: "repulse" },
+        resize: true,
+      },
+      modes: {
+        push: { quantity: 4 },
+        repulse: { distance: 100, duration: 0.4 },
+      },
+    },
+    particles: {
+      color: { value: "#ffffff" },
+      links: {
+        color: "#ffffff",
+        distance: 150,
+        enable: true,
+        opacity: 0.4,
+        width: 1,
+      },
+      collisions: { enable: false },
+      move: {
+        directions: "none",
+        enable: true,
+        outModes: { default: "out" },
+        random: false,
+        speed: 2,
+        straight: false,
+      },
+      number: {
+        density: { enable: true, area: 800 },
+        value: 80,
+      },
+      opacity: { value: 0.5 },
+      shape: { type: "circle" },
+      size: { value: { min: 1, max: 5 } },
+    },
+    detectRetina: true,
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-black relative">
+      <Particles
+        id="tsparticles"
+        init={particlesInit}
+        options={particlesOptions}
+        className="absolute top-0 left-0 w-full h-full"
+      />
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md relative z-10">
+        {/* Tabs */}
+        <div className="flex justify-around mb-6">
+          <button
+            onClick={() => setIsLogin(true)}
+            className={`px-4 py-2 focus:outline-none ${
+              isLogin
+                ? 'border-b-2 border-[#D65600] text-[#D65600] font-bold'
+                : 'text-gray-700'
+            }`}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setIsLogin(false)}
+            className={`px-4 py-2 focus:outline-none ${
+              !isLogin
+                ? 'border-b-2 border-[#D65600] text-[#D65600] font-bold'
+                : 'text-gray-700'
+            }`}
+          >
+            Register
+          </button>
+        </div>
+
+        {/* Login Form */}
+        {isLogin ? (
+          <form className="space-y-4">
+            <div>
+              <label
+                htmlFor="login-username"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="login-username"
+                placeholder="Enter your username"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="login-password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                id="login-password"
+                placeholder="Enter your password"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <button type="submit" className="w-full bg-[#D65600] text-white py-2 rounded">
+              Login
+            </button>
+          </form>
+        ) : (
+          // Register Form
+          <form className="space-y-4">
+            <div>
+              <label
+                htmlFor="register-username"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="register-username"
+                placeholder="Choose a username"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="register-email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="register-email"
+                placeholder="Enter your email"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="register-password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                id="register-password"
+                placeholder="Create a password"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <button type="submit" className="w-full bg-[#D65600] text-white py-2 rounded">
+              Register
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

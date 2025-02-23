@@ -1,180 +1,222 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { useRef, useMemo, useState } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import * as THREE from "three";
 
-// 🌞 Solar Event Data
-const solarEvents = [
-  {
-    time21_5: "2016-09-06T14:18Z",
-    latitude: -20.0,
-    longitude: 120.0,
-    speed: 674.0,
-    type: "C",
-  },
-  {
-    time21_5: "2016-09-15T04:24Z",
-    latitude: -18.0,
-    longitude: -122.0,
-    speed: 722.0,
-    type: "C",
-  },
-];
+const GradientMaterial = () => {
+  return (
+    <shaderMaterial
+      attach="material"
+      uniforms={{
+        color1: { value: new THREE.Color("#ffcc00") },
+        color2: { value: new THREE.Color("#ff4500") },
+      }}
+      vertexShader={`
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `}
+      fragmentShader={`
+        varying vec2 vUv;
+        uniform vec3 color1;
+        uniform vec3 color2;
+        void main() {
+          gl_FragColor = vec4(mix(color1, color2, vUv.y), 1.0);
+        }
+      `}
+    />
+  );
+};
 
-// 🌞 Sun Component
-const Sun = ({ onHover, isHovered }) => {
+const Sun = ({ onHover, isHovered, solarEvents }) => {
   const sunRef = useRef();
-
-  // 🔄 Rotate the Sun continuously unless hovered
   useFrame(() => {
     if (sunRef.current && !isHovered) {
       sunRef.current.rotation.y += 0.002;
     }
   });
 
-  // ☀️ Load Sun texture
-  const sunTexture = new THREE.TextureLoader().load("/sun.jpg", (texture) => {
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.minFilter = THREE.LinearFilter;
-  });
-
   return (
-    <mesh ref={sunRef} rotation={[0, Math.PI, 0]}>
-      <sphereGeometry args={[3, 64, 64]} />
-      <meshStandardMaterial
-        map={sunTexture}
-        emissiveMap={sunTexture}
-        emissive={new THREE.Color("#ff8c00")}
-        emissiveIntensity={2}
-        roughness={0.1}
-        side={THREE.DoubleSide}
-      />
-
-      {/* 🔥 Glowing Halo */}
-      <mesh>
-        <sphereGeometry args={[3.5, 64, 64]} />
-        <meshBasicMaterial color={"orange"} transparent opacity={0.5} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* 🌍 Solar Event Points */}
+    <mesh ref={sunRef}>
+      <sphereGeometry args={[3, 128, 128]} />
+      <GradientMaterial />
       <SolarEventMarkers data={solarEvents} onHover={onHover} />
     </mesh>
   );
 };
 
-// 🟢 Solar Event Markers (Points on the Sun)
-const SolarEventMarkers = ({ data, onHover }) => {
-  const { camera, size } = useThree();
+const SolarEventMarkers = ({ data = [], onHover }) => {
   const [hovered, setHovered] = useState(null);
+  const lastHoveredRef = useRef(null);
+  const hoverTimeout = useRef(null);
+  const markerSize = data.length > 30 ? 0.05 : 0.1;
+
+  // Memoize the glow texture to avoid recreating it on every render
+  const glowTexture = useMemo(() => getGlowTexture(), []);
 
   const positions = useMemo(() => {
-    return data.map((event) => {
-      const latRad = (event.latitude * Math.PI) / 180;
-      const lonRad = (event.longitude * Math.PI) / 180;
-      const radius = 3.05; // Slightly above the surface
-
-      return {
-        position: new THREE.Vector3(
-          radius * Math.cos(latRad) * Math.cos(lonRad),
-          radius * Math.sin(latRad),
-          radius * Math.cos(latRad) * Math.sin(lonRad)
-        ),
-        data: event,
-      };
-    });
+    return data
+      .map((event) => {
+        if (!event.latitude || !event.longitude) return null;
+        const latRad = (event.latitude * Math.PI) / 180;
+        const lonRad = (event.longitude * Math.PI) / 180;
+        const radius = 3.05;
+        return {
+          position: new THREE.Vector3(
+            radius * Math.cos(latRad) * Math.cos(lonRad),
+            radius * Math.sin(latRad),
+            radius * Math.cos(latRad) * Math.sin(lonRad)
+          ),
+          data: event,
+        };
+      })
+      .filter(Boolean);
   }, [data]);
 
   return (
     <group>
       {positions.map((event, index) => (
-        <mesh
-          key={index}
-          position={event.position}
-          onPointerOver={(e) => {
-            e.stopPropagation();
-            setHovered(event);
-            // Convert 3D position to 2D screen position
-            const vector = event.position.clone().project(camera);
-            const x = ((vector.x + 1) / 2) * size.width;
-            const y = ((1 - vector.y) / 2) * size.height;
-            onHover(event.data, x, y);
-          }}
-          onPointerOut={() => {
-            setHovered(null);
-            onHover(null, 0, 0);
-          }}
-        >
-          <sphereGeometry args={[0.1, 8, 8]} />
-          <meshBasicMaterial color={hovered ? "yellow" : "red"} />
-        </mesh>
+        <group key={index}>
+          <mesh
+            position={event.position}
+            onPointerOver={(e) => {
+              e.stopPropagation();
+              if (lastHoveredRef.current !== event) {
+                lastHoveredRef.current = event;
+                clearTimeout(hoverTimeout.current);
+                hoverTimeout.current = setTimeout(() => {
+                  setHovered(event);
+                  onHover(
+                    {
+                      time: `Time: ${event.data.time21_5}`,
+                      details: `Type: ${event.data.type} - Speed: ${event.data.speed} km/s`,
+                      note: event.data.note,
+                    },
+                    e.clientX,
+                    e.clientY
+                  );
+                }, 50);
+              }
+            }}
+            onPointerOut={() => {
+              if (lastHoveredRef.current !== null) {
+                lastHoveredRef.current = null;
+                clearTimeout(hoverTimeout.current);
+                setHovered(null);
+                onHover(null, 0, 0);
+              }
+            }}
+          >
+            <sphereGeometry args={[markerSize, 16, 16]} />
+            <meshStandardMaterial
+              color={hovered === event ? "yellow" : "#7C238C"}
+              emissive={hovered === event ? "yellow" : "#7C238C"}
+              emissiveIntensity={2}
+            />
+          </mesh>
+          <sprite position={event.position} scale={[0.2, 0.2, 0.2]}>
+            <spriteMaterial attach="material" map={glowTexture} />
+          </sprite>
+        </group>
       ))}
     </group>
   );
 };
 
-// 🌌 Full Solar Scene (Moved useThree inside Canvas)
-const SceneWrapper = ({ onHover, isHovered }) => {
+const getGlowTexture = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  gradient.addColorStop(0, "rgba(255, 0, 0, 1)");
+  gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 256, 256);
+  const texture = new THREE.CanvasTexture(canvas);
+  return texture;
+};
+
+const SceneWrapper = ({ onHover, isHovered, solarEvents }) => {
   return (
-    <Canvas style={{ width: "100%", height: "500px", background: "black" }}>
+    <Canvas
+      style={{ width: "100%", height: "500px", background: "black" }}
+      camera={{ position: [0, 0, 10] }}
+    >
       <Stars radius={300} depth={50} count={5000} factor={4} />
-      <Sun onHover={onHover} isHovered={isHovered} />
-      <pointLight position={[10, 10, 10]} intensity={5} />
-      <ambientLight intensity={1.5} />
-      <OrbitControls enableZoom={false} />
+      <Sun onHover={onHover} isHovered={isHovered} solarEvents={solarEvents} />
+      <pointLight position={[10, 10, 10]} intensity={3} color={"#ff9900"} />
+      <ambientLight intensity={1.8} />
+      <OrbitControls minDistance={5} maxDistance={20} />
     </Canvas>
   );
 };
 
-// 🚀 Main Component with Tooltip Handling
 const SolarScene = () => {
-  const [hoveredEvent, setHoveredEvent] = useState(null);
-  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  const [solarEvents, setSolarEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [tooltip, setTooltip] = useState(null);
 
-  // 🛠️ Updates tooltip when hovering over points
-  const handleHover = (eventData, x, y) => {
-    if (eventData) {
-      setHoveredEvent(eventData);
-      setTooltipPos({ x, y });
-      setIsHovered(true);
+  const handleHover = (data, x, y) => {
+    if (data) {
+      setTooltip({ data, x, y });
     } else {
-      setHoveredEvent(null);
-      setIsHovered(false);
+      setTooltip(null);
     }
   };
 
+  useEffect(() => {
+    const fetchSolarEvents = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `https://api.infradash.space/api/donki/search?startDate=2025-01-01&endDate=2025-01-31&eventType=Analisys`
+        );
+        const data = await res.json();
+        setSolarEvents(data.filter((event) => event.latitude && event.longitude));
+      } catch (error) {
+        console.error("Error fetching solar events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSolarEvents();
+  }, []);
+
   return (
-    <div style={{ position: "relative", width: "100%", height: "500px" }}>
-      {/* 🏷️ Tooltip for Solar Events */}
-      {hoveredEvent && (
+    <div style={{ position: "relative", width: "100%" }}>
+      {loading && <p>Loading events...</p>}
+      <SceneWrapper
+        solarEvents={solarEvents}
+        onHover={handleHover}
+        isHovered={Boolean(tooltip)}
+      />
+      {tooltip && (
         <div
           style={{
             position: "absolute",
-            top: tooltipPos.y + "px",
-            left: tooltipPos.x + "px",
-            padding: "10px",
-            backgroundColor: "rgba(0,0,0,0.8)",
+            left: tooltip.x,
+            top: tooltip.y,
+            background: "rgba(0, 0, 0, 0.7)",
             color: "white",
-            borderRadius: "5px",
-            fontSize: "14px",
+            padding: "8px",
+            borderRadius: "4px",
             pointerEvents: "none",
-            whiteSpace: "nowrap",
-            zIndex: 10,
-            transform: "translate(-50%, -50%)",
+            transform: "translate(-50%, -100%)",
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+            maxWidth: "200px",
           }}
         >
-          <strong>Solar Flare</strong>
-          <p><strong>Time:</strong> {hoveredEvent.time21_5}</p>
-          <p><strong>Speed:</strong> {hoveredEvent.speed} km/s</p>
-          <p><strong>Type:</strong> {hoveredEvent.type}</p>
+          <p>{tooltip.data.time}</p>
+          <p>{tooltip.data.details}</p>
+          {tooltip.data.note && <p>{tooltip.data.note}</p>}
         </div>
       )}
-
-      {/* 🟢 3D Sun Scene (useThree fix inside Canvas) */}
-      <SceneWrapper onHover={handleHover} isHovered={isHovered} />
     </div>
   );
 };
