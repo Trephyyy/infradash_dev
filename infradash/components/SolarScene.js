@@ -113,8 +113,8 @@ const SolarEventMarkers = ({ data = [], onHover }) => {
           >
             <sphereGeometry args={[markerSize, 16, 16]} />
             <meshStandardMaterial
-              color={hovered === event ? "yellow" : "#7C238C"}
-              emissive={hovered === event ? "yellow" : "#7C238C"}
+              color={hovered === event ? "yellow" : "#ADB4BF"}
+              emissive={hovered === event ? "yellow" : "#ADB4BF"}
               emissiveIntensity={2}
             />
           </mesh>
