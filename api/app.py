@@ -70,8 +70,29 @@ def predict():
     # Filter results for the requested number of days
     prediction_results = prediction_results.head(days)
 
+    # Generate warnings based on severity
+    warnings = []
+    for _, row in prediction_results.iterrows():
+        severity = row['Severity']
+        if severity > 80:
+            code = 'red'
+        elif severity > 70:
+            code = 'orange'
+        elif severity > 60:
+            code = 'yellow'
+        else:
+            continue
+        warnings.append({
+            'severity': severity,
+            'code': code,
+            'timestamp': row['Timestamp']
+        })
+
     # Return the results as JSON
-    return jsonify(prediction_results.to_dict(orient='records'))
+    return jsonify({
+        'data': prediction_results.to_dict(orient='records'),
+        'warnings': warnings
+    })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8001)  # Bind to port 8001
