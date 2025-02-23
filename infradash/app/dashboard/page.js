@@ -84,8 +84,8 @@ export default function Dashboard() {
 
   // Fetch future data when futureRange changes
   useEffect(() => {
-    fetchFutureData(futureRange);  // Fetch future predictions when the time range changes
-  }, [futureRange]);
+    fetchFutureData();  // Fetch future predictions on time frame change
+}, [futureRange]);
 
   return (
     <>
@@ -159,8 +159,7 @@ export default function Dashboard() {
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
               Future Predictions ({futureRange} Days)
             </h2>
-            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>
-          </motion.div>
+            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>          </motion.div>
 
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">
