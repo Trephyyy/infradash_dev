@@ -54,6 +54,7 @@ export default function Dashboard() {
       const res = await fetch(url);
       const data = await res.json();
 
+
       const processedData = data.data.map((item) => ({
         time: new Date(item.Timestamp).getTime(),
         intensity: item.Severity,
@@ -144,6 +145,9 @@ export default function Dashboard() {
             >
               <GrafanaPanel title="Coronal Mass Ejections (CME) Over Time" data={cmeData} setSelectedRange={setCmeRange} selectedRange={cmeRange} />
             </motion.div>
+            <div>
+              { data.warnings}
+            </div>
           </div>
 
           {/* Future Predictions Graph */}
