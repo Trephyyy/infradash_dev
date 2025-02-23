@@ -50,19 +50,19 @@ export default function Dashboard() {
   };
 
   // Fetch future prediction data with respect to futureRange
-  const fetchFutureData = async (rangeDays) => {
+  const fetchFutureData = async () => {
     try {
-      const url = `https://api.infradash.space/predict?Days=${rangeDays}`;
+      const url = `https://api.infradash.space/predict?Days=${futureRange}`;
       const res = await fetch(url);
       const data = await res.json();
-
+  
       const processedData = data.data.map((item) => ({
         time: new Date(item.Timestamp).getTime(),
         intensity: item.Severity,
       }));
-
+      console.log('Fetched future data:', processedData);
       setFutureData(processedData);
-      setWarnings(data.warnings);
+      setWarnings(data.warnings); // Assuming warnings are handled
     } catch (error) {
       console.error("Error fetching future predictions:", error);
     }
