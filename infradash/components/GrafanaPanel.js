@@ -79,7 +79,7 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
                 key={range}
                 className={`px-3 py-1 text-xs rounded border transition ${
                   selectedRange === parseInt(range)
-                    ? `bg-[${buttonColor}] border-[${buttonColor}] text-black` // Use buttonColor for selected button
+                    ? `bg-white border-[${buttonColor}] text-[${buttonColor}]` // Use white background for selected button
                     : `border-[${buttonColor}] bg-transparent text-[${buttonColor}]` // Use buttonColor for unselected button
                 } hover:bg-[${buttonColor}] hover:text-black hover:border-[${buttonColor}]`}
                 onClick={() => setSelectedRange(parseInt(range))}

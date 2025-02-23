@@ -172,7 +172,7 @@ export default function Dashboard() {
           {/* Warnings for the next year */}
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-500">
-              Warnings for the Next Year
+              Warnings for selected period
             </h2>
             <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[80%] mx-auto text-white">
               {warnings.length > 0 ? (
@@ -184,7 +184,7 @@ export default function Dashboard() {
                   ))}
                 </ul>
               ) : (
-                <p>No warnings for the next year.</p>
+                <p>No warnings for the selected period.</p>
               )}
             </div>
           </motion.div>
