@@ -32,7 +32,7 @@ const GradientMaterial = () => {
   );
 };
 
-const Sun = ({ onHover, isHovered, solarEvents }) => {
+const Sun = ({ onHover, isHovered, setIsHovered, solarEvents }) => {
   const sunRef = useRef();
   useFrame(() => {
     if (sunRef.current && !isHovered) {
@@ -41,7 +41,11 @@ const Sun = ({ onHover, isHovered, solarEvents }) => {
   });
 
   return (
-    <mesh ref={sunRef}>
+    <mesh
+      ref={sunRef}
+      onPointerOver={() => setIsHovered(true)}
+      onPointerOut={() => setIsHovered(false)}
+    >
       <sphereGeometry args={[3, 128, 128]} />
       <GradientMaterial />
       <SolarEventMarkers data={solarEvents} onHover={onHover} />
@@ -141,14 +145,14 @@ const getGlowTexture = () => {
   return texture;
 };
 
-const SceneWrapper = ({ onHover, isHovered, solarEvents }) => {
+const SceneWrapper = ({ onHover, isHovered, setIsHovered, solarEvents }) => {
   return (
     <Canvas
       style={{ width: "100%", height: "500px", background: "black" }}
       camera={{ position: [0, 0, 10] }}
     >
       <Stars radius={300} depth={50} count={5000} factor={4} />
-      <Sun onHover={onHover} isHovered={isHovered} solarEvents={solarEvents} />
+      <Sun onHover={onHover} isHovered={isHovered} setIsHovered={setIsHovered} solarEvents={solarEvents} />
       <pointLight position={[10, 10, 10]} intensity={3} color={"#ff9900"} />
       <ambientLight intensity={1.8} />
       <OrbitControls minDistance={5} maxDistance={20} />
@@ -160,6 +164,7 @@ const SolarScene = () => {
   const [solarEvents, setSolarEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tooltip, setTooltip] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleHover = (data, x, y) => {
     if (data) {
@@ -193,7 +198,8 @@ const SolarScene = () => {
       <SceneWrapper
         solarEvents={solarEvents}
         onHover={handleHover}
-        isHovered={Boolean(tooltip)}
+        isHovered={isHovered}
+        setIsHovered={setIsHovered}
       />
       {tooltip && (
         <div
@@ -206,7 +212,7 @@ const SolarScene = () => {
             padding: "8px",
             borderRadius: "4px",
             pointerEvents: "none",
-            transform: "translate(-50%, 0)", // Move directly under the cursor
+            transform: "translate(-5px, 0)", // Move directly under the cursor
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
             maxWidth: "200px",
