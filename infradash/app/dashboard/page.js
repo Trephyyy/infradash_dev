@@ -52,7 +52,7 @@ export default function Dashboard() {
   // Fetch future prediction data with respect to futureRange
   const fetchFutureData = async () => {
     try {
-      const url = `https://api.infradash.space/predict?Days=${futureRange}`;
+      const url = `https://api.infradash.space/predict?days=${futureRange}`;
       const res = await fetch(url);
       const data = await res.json();
   
