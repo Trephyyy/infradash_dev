@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
-export default function GrafanaPanel({ title, data, setSelectedRange, selectedRange }) {
+export default function GrafanaPanel({ title, data, setSelectedRange, selectedRange, borderColor, backgroundColor, buttonColor }) {
   const [chartData, setChartData] = useState({
     labels: [],
     fullLabels: [],
@@ -13,7 +13,7 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
     responsive: true,
     plugins: {
       legend: {
-        labels: { color: "#D65600" }
+        labels: { color: buttonColor } // Use buttonColor for legend labels
       },
       tooltip: {
         callbacks: {
@@ -28,14 +28,14 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
     },
     scales: {
       x: {
-        ticks: { color: "#D65600" },
-        grid: { color: "#333" }
+        ticks: { color: buttonColor }, // Use buttonColor for x-axis ticks
+        grid: { color: "#444" } // Changed x-axis grid color to a darker shade
       },
       y: {
         min: 0, // Set minimum intensity
         max: 100, // Set maximum intensity
-        ticks: { color: "#D65600" },
-        grid: { color: "#333" }
+        ticks: { color: buttonColor }, // Use buttonColor for y-axis ticks
+        grid: { color: "#444" } // Changed y-axis grid color to a darker shade
       }
     }
   };
@@ -55,15 +55,15 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
           {
             label: title,
             data: data.map(d => d.intensity || d.kpIndex || d.speed || 0),
-            borderColor: "#D65600",
-            backgroundColor: "rgba(214,86,0,0.2)",
+            borderColor: borderColor, // Use borderColor prop
+            backgroundColor: backgroundColor, // Use backgroundColor prop
             fill: true,
             tension: 0.4
           }
         ]
       });
     }
-  }, [data, title, selectedRange]); // Added selectedRange here
+  }, [data, title, selectedRange, borderColor, backgroundColor]); // Added selectedRange here
   
 
   return (
@@ -79,9 +79,9 @@ export default function GrafanaPanel({ title, data, setSelectedRange, selectedRa
                 key={range}
                 className={`px-3 py-1 text-xs rounded border transition ${
                   selectedRange === parseInt(range)
-                    ? "bg-[#D65600] border-[#D65600] text-black"
-                    : "border-[#D65600] bg-transparent text-[#D65600]"
-                } hover:bg-[#D65600] hover:text-black hover:border-[#D65600]`}
+                    ? `bg-[${buttonColor}] border-[${buttonColor}] text-black` // Use buttonColor for selected button
+                    : `border-[${buttonColor}] bg-transparent text-[${buttonColor}]` // Use buttonColor for unselected button
+                } hover:bg-[${buttonColor}] hover:text-black hover:border-[${buttonColor}]`}
                 onClick={() => setSelectedRange(parseInt(range))}
               >
                 {range === "7"
