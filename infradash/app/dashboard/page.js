@@ -101,8 +101,11 @@ export default function Dashboard() {
         transition={{ duration: 0.6 }}
         className="p-6 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col items-center"
       >
+      <div className="flex justify-center mb-8">
+        <img src="/logo.png" alt="Infradash Logo" className="w-32 h-32" />
+      </div>
         <div className="max-w-screen-xl w-full relative">
-       
+          <img src="/logo.png" alt="Infradash Logo" className="" />
           <h1 className="text-5xl font-extrabold mb-8 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">
             Solar Event Dashboard
           </h1>
