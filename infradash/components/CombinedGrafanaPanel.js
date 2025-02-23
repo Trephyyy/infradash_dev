@@ -113,7 +113,7 @@ export default function CombinedGrafanaPanel({
   }, [combinedFlareData, combinedCMEData]);
 
   return (
-    <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[90%] mx-auto mb-8">
+    <div className="bg-[#1a1a1a] p-4 shadow-md rounded-lg relative w-[80%] mx-auto mb-8">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-white">{title}</h2>
         <div className="flex gap-2 mt-2">
