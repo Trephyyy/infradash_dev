@@ -117,8 +117,8 @@ const SolarEventMarkers = ({ data = [], onHover }) => {
           >
             <sphereGeometry args={[markerSize, 16, 16]} />
             <meshStandardMaterial
-              color={hovered === event ? "yellow" : "#ADB4BF"}
-              emissive={hovered === event ? "yellow" : "#ADB4BF"}
+              color={hovered === event ? "red" : "#ADB4BF"} // Change color on hover
+              emissive={hovered === event ? "red" : "#ADB4BF"} // Change emissive color on hover
               emissiveIntensity={2}
             />
           </mesh>
@@ -204,7 +204,7 @@ const SolarScene = () => {
       {tooltip && (
         <div
           style={{
-            position: "absolute",
+            position: "fixed", // Ensure the tooltip is fixed on the screen
             left: tooltip.x,
             top: tooltip.y,
             background: "rgba(0, 0, 0, 0.7)",
@@ -216,6 +216,7 @@ const SolarScene = () => {
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
             maxWidth: "200px",
+            zIndex: 1000, // Ensure the tooltip is on top
           }}
         >
           <p>{tooltip.data.time}</p>
