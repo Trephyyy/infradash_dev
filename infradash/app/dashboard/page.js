@@ -89,7 +89,7 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard</title>
+        <title>dashboard</title>
         <meta name="description" content="Monitor solar flares, coronal mass ejections (CME), and predictions for solar activity. Stay up to date with real-time solar event data." />
       </Head>
 
