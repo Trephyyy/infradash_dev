@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\CME;
 use App\Models\CMEAnalysis;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class CMESeeder extends Seeder
@@ -15,59 +14,51 @@ class CMESeeder extends Seeder
      */
     public function run(): void
     {
-        $startDate = "2024-12-31";
-        $endDate = "2025-02-22";
+        $filePath = base_path('cme.json');
 
-        $response = Http::withOptions(['verify' => false, 'timeout' => 60])->retry(3, 100)->get('https://api.nasa.gov/DONKI/CME', [
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'catalog' => 'ALL',
-            'api_key' => env('NASA_API_KEY'),
-        ]);
+        if (!file_exists($filePath)) {
+            Log::error("File not found: $filePath");
+            return;
+        }
 
-        if ($response->successful()) {
-            $data = $response->json();
+        $data = json_decode(file_get_contents($filePath), true);
 
-            foreach ($data as $event) {
-                if (isset($event['cmeAnalyses']) && count($event['cmeAnalyses']) > 0) {
-                    $cme = CME::updateOrCreate(
-                        ['activity_id' => $event['activityID']],
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::error("Failed to decode JSON from file: " . json_last_error_msg());
+            return;
+        }
+
+        foreach ($data as $event) {
+            if (isset($event['cmeAnalyses']) && count($event['cmeAnalyses']) > 0) {
+                $cme = CME::updateOrCreate(
+                    ['activity_id' => $event['activityID']],
+                    [
+                        'catalog' => $event['catalog'] ?? null,
+                        'start_time' => $event['startTime'] ?? null,
+                        'note' => substr($event['note'] ?? null, 0, 255),
+                        'submission_time' => $event['submissionTime'] ?? null,
+                        'version_id' => $event['versionId'] ?? null,
+                        'link' => $event['link'] ?? null,
+                        'intensity' => $this->calculateIntensity($event['cmeAnalyses'])
+                    ]
+                );
+
+                foreach ($event['cmeAnalyses'] as $analysis) {
+                    CMEAnalysis::updateOrCreate(
+                        ['cme_id' => $cme->id, 'time21_5' => $analysis['time21_5']],
                         [
-                            'catalog' => $event['catalog'] ?? null,
-                            'start_time' => $event['startTime'] ?? null,
-                            'source_location' => $event['sourceLocation'] ?? null,
-                            'active_region_num' => $event['activeRegionNum'] ?? null,
-                            'note' => substr($event['note'] ?? null, 0, 255),
-                            'submission_time' => $event['submissionTime'] ?? null,
-                            'version_id' => $event['versionId'] ?? null,
-                            'link' => $event['link'] ?? null,
-                            'intensity' => $this->calculateIntensity($event['cmeAnalyses'])
+                            'latitude' => $analysis['latitude'] ?? null,
+                            'longitude' => $analysis['longitude'] ?? null,
+                            'half_angle' => $analysis['halfAngle'] ?? null,
+                            'speed' => $analysis['speed'] ?? null,
+                            'type' => $analysis['type'] ?? null,
+                            'image_type' => $analysis['imageType'] ?? null,
+                            'note' => substr($analysis['note'] ?? null, 0, 255),
+                            'tilt' => $analysis['tilt'] ?? null,
+                            'submission_time' => $analysis['submissionTime'] ?? null,
+                            'link' => $analysis['link'] ?? null
                         ]
                     );
-
-                    foreach ($event['cmeAnalyses'] as $analysis) {
-                        CMEAnalysis::updateOrCreate(
-                            ['cme_id' => $cme->id, 'time21_5' => $analysis['time21_5']],
-                            [
-                                'is_most_accurate' => $analysis['isMostAccurate'] ?? false,
-                                'latitude' => $analysis['latitude'] ?? null,
-                                'longitude' => $analysis['longitude'] ?? null,
-                                'half_angle' => $analysis['halfAngle'] ?? null,
-                                'speed' => $analysis['speed'] ?? null,
-                                'type' => $analysis['type'] ?? null,
-                                'feature_code' => $analysis['featureCode'] ?? null,
-                                'image_type' => $analysis['imageType'] ?? null,
-                                'measurement_technique' => $analysis['measurementTechnique'] ?? null,
-                                'note' => substr($analysis['note'] ?? null, 0, 255),
-                                'level_of_data' => $analysis['levelOfData'] ?? null,
-                                'tilt' => $analysis['tilt'] ?? null,
-                                'minor_half_width' => $analysis['minorHalfWidth'] ?? null,
-                                'speed_measured_at_height' => $analysis['speedMeasuredAtHeight'] ?? null,
-                                'submission_time' => $analysis['submissionTime'] ?? null,
-                                'link' => $analysis['link'] ?? null
-                            ]
-                        );
-                    }
                 }
             }
         }
