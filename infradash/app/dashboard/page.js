@@ -152,7 +152,12 @@ export default function Dashboard() {
               />
             </motion.div>
           </div>
-
+          <motion.div 
+            className="w-full h-[4px] bg-gradient-to-r from-orange-500 to-yellow-300 rounded-full shadow-lg mt-6"
+            initial={{ opacity: 0, scaleX: 0.8 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 1 }}
+          />
           {/* Future Predictions Graph */}
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
@@ -188,7 +193,12 @@ export default function Dashboard() {
               )}
             </div>
           </motion.div>
-
+          <motion.div 
+            className="w-full h-[4px] bg-gradient-to-r from-orange-500 to-yellow-300 rounded-full shadow-lg mt-6"
+            initial={{ opacity: 0, scaleX: 0.8 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 1 }}
+          />
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">
               3D Interactive Flare Position On The Sun
