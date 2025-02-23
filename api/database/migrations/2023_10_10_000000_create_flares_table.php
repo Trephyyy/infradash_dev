@@ -11,11 +11,11 @@ class CreateFlaresTable extends Migration
         Schema::create('flares', function (Blueprint $table) {
             $table->id();
             $table->string('flr_id')->unique();
-            $table->string('catalog');
+            $table->string('catalog')->nullable();
             $table->string('instrument')->nullable();
-            $table->dateTime('begin_time');
-            $table->dateTime('peak_time');
-            $table->dateTime('end_time');
+            $table->dateTime('begin_time')->nullable();
+            $table->dateTime('peak_time')->nullable();
+            $table->dateTime('end_time')->nullable();
             $table->string('class_type')->nullable();
             $table->string('source_location')->nullable();
             $table->integer('active_region_num')->nullable();

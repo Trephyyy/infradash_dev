@@ -14,7 +14,7 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        $startDate = "2024-12-31";
+        $startDate = "2024-01-31";
         $endDate = "2025-02-22";
 
         $response = Http::withOptions(['verify' => false])->get('https://api.nasa.gov/DONKI/FLR', [
@@ -32,18 +32,9 @@ class EventSeeder extends Seeder
                 Flare::updateOrCreate(
                     ['flr_id' => $event['flrID']],
                     [
-                        'catalog' => $event['catalog'] ?? null,
-                        'instrument' => $event['instruments'][0]['displayName'] ?? null,
                         'begin_time' => $event['beginTime'] ?? null,
                         'peak_time' => $event['peakTime'] ?? null,
                         'end_time' => $event['endTime'] ?? null,
-                        'class_type' => $event['classType'] ?? null,
-                        'source_location' => $event['sourceLocation'] ?? null,
-                        'active_region_num' => $event['activeRegionNum'] ?? null,
-                        'note' => substr($event['note'] ?? null, 0, 255),
-                        'submission_time' => $event['submissionTime'] ?? null,
-                        'version_id' => $event['versionId'] ?? null,
-                        'link' => $event['link'] ?? null,
                         'intensity' => $this->convertClassToScale($event['classType'] ?? null),
                     ]
                 );
