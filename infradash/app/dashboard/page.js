@@ -52,8 +52,8 @@ export default function Dashboard() {
     try {
       const url = "https://api.infradash.space/predict?Days=30";
       const res = await fetch(url);
-      const data = await res.json().data;
-      const warnings = await res.json().warnings;
+      const {data} = await res.json();
+      const {warnings} = await res.json();
 
       const processedData = data.map((item) => ({
         time: new Date(item.Timestamp).getTime(),
