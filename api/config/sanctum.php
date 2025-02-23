@@ -20,7 +20,7 @@ return [
         'https://www.infradash.com:6969,
     https://infradash.com:6969',
         Sanctum::currentApplicationUrlWithPort(),
-        env('FRONTEND_URL') ? ',' . parse_url(env('FRONTEND_URL'), PHP_URL_HOST) : ''
+        "https://infradash.space" || "https://www.infradash.space" ? ',' . parse_url(env('FRONTEND_URL'), PHP_URL_HOST) : ''
     ))),
 
     /*
