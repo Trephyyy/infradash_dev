@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [warnings, setWarnings] = useState("No warnings");  // New state for future predictions
   const [flareRange, setFlareRange] = useState(30);
   const [cmeRange, setCmeRange] = useState(30);
+  const [futureRange, setFutureRange] = useState(30);  // New state for future predictions
   const [combinedRange, setCombinedRange] = useState(30);
 
   // Fetch past event data
@@ -51,7 +52,7 @@ export default function Dashboard() {
   // Fetch future prediction data
   const fetchFutureData = async () => {
     try {
-      const url = "https://api.infradash.space/predict?Days=180";
+      const url = `https://api.infradash.space/predict?Days=${futureRange}`;
       const res = await fetch(url);
       const data = await res.json();
 
@@ -157,7 +158,7 @@ export default function Dashboard() {
             <h2 className="text-3xl font-bold mb-4 tracking-wide text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
               Future Predictions (30 Days)
             </h2>
-            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} />
+            <GrafanaPanel title="Predicted Solar Activity Over Time" data={futureData} setSelectedRange={setFutureRange} selectedRange={futureRange}/>
           </motion.div>
 
           <motion.div className="w-full max-w-screen-xl mt-10" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
